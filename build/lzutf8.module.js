@@ -389,82 +389,6 @@ var EventLoop = (function () {
 }());
 EventLoop.initializeScheduler();
 
-var WebWorker = (function () {
-    function WebWorker() {
-    }
-    WebWorker.decompressAsync = function (input, options, callback) {
-        var request = {
-            token: Math.random().toString(),
-            type: "decompress",
-            data: input
-        };
-        var responseListener = function (e) {
-            var response = e.data;
-            if (!response || response.token != request.token)
-                return;
-            WebWorker.globalWorker.removeEventListener("message", responseListener);
-            if (response.type == "error")
-                callback(undefined, new Error(response.error));
-            else
-                callback(response.data);
-        };
-        WebWorker.globalWorker.addEventListener("message", responseListener);
-        WebWorker.globalWorker.postMessage(request, []);
-    };
-    WebWorker.installWebWorkerIfNeeded = function () {
-        if (typeof self == "object" && self.document === undefined && self.addEventListener != undefined) {
-            self.addEventListener("message", function (e) {
-                var request = e.data;
-                if (request.type == "decompress") {
-                    var decompressedData = void 0;
-                    try {
-                        decompressedData = decompress(request.data);
-                    }
-                    catch (e) {
-                        self.postMessage({ token: request.token, type: "error", error: createErrorMessage(e) }, []);
-                        return;
-                    }
-                    var response = {
-                        token: request.token,
-                        type: "decompressionResult",
-                        data: decompressedData,
-                    };
-                    self.postMessage(response, []);
-                }
-            });
-            self.addEventListener("error", function (e) {
-                console.log(createErrorMessage(e.error, "Unexpected LZUTF8 WebWorker exception"));
-            });
-        }
-    };
-    WebWorker.createGlobalWorkerIfNeeded = function () {
-        if (WebWorker.globalWorker)
-            return true;
-        if (!webWorkersAvailable())
-            return false;
-        if (!WebWorker.scriptURI && typeof document === "object") {
-            var scriptElement = document.getElementById("lzutf8");
-            if (scriptElement != null)
-                WebWorker.scriptURI = scriptElement.getAttribute("src") || undefined;
-        }
-        if (WebWorker.scriptURI) {
-            WebWorker.globalWorker = new Worker(WebWorker.scriptURI);
-            return true;
-        }
-        else {
-            return false;
-        }
-    };
-    WebWorker.terminate = function () {
-        if (WebWorker.globalWorker) {
-            WebWorker.globalWorker.terminate();
-            WebWorker.globalWorker = undefined;
-        }
-    };
-    return WebWorker;
-}());
-WebWorker.installWebWorkerIfNeeded();
-
 var Timer = (function () {
     function Timer() {
         this.restart();
@@ -559,6 +483,91 @@ function decompress(input) {
     var decompressedBytes = decompressor.decompressBlock(inputBytes);
     return CompressionCommon.encodeDecompressedBytes(decompressedBytes);
 }
+
+var WebWorker = (function () {
+    function WebWorker() {
+    }
+    WebWorker.decompressAsync = function (input, options, callback) {
+        var request = {
+            token: Math.random().toString(),
+            type: "decompress",
+            data: input
+        };
+        var responseListener = function (e) {
+            var response = e.data;
+            if (!response || response.token != request.token)
+                return;
+            WebWorker.globalWorker.removeEventListener("message", responseListener);
+            if (response.type == "error")
+                callback(undefined, new Error(response.error));
+            else
+                callback(response.data);
+        };
+        WebWorker.globalWorker.addEventListener("message", responseListener);
+        WebWorker.globalWorker.postMessage(request, []);
+    };
+    WebWorker.installWebWorkerIfNeeded = function () {
+        if (typeof self == "object" && self.document === undefined && self.addEventListener != undefined) {
+            self.addEventListener("message", function (e) {
+                var request = e.data;
+                if (request.type == "decompress") {
+                    var decompressedData = void 0;
+                    try {
+                        decompressedData = decompress(request.data);
+                    }
+                    catch (e) {
+                        self.postMessage({ token: request.token, type: "error", error: createErrorMessage(e) }, []);
+                        return;
+                    }
+                    var response = {
+                        token: request.token,
+                        type: "decompressionResult",
+                        data: decompressedData,
+                    };
+                    self.postMessage(response, []);
+                }
+            });
+            self.addEventListener("error", function (e) {
+                console.log(createErrorMessage(e.error, "Unexpected LZUTF8 WebWorker exception"));
+            });
+        }
+    };
+    WebWorker.createGlobalWorkerIfNeeded = function () {
+        if (WebWorker.globalWorker)
+            return true;
+        if (!webWorkersAvailable())
+            return false;
+        if (!WebWorker.scriptURI && typeof document === "object") {
+            var scriptElement = document.getElementById("lzutf8");
+            if (scriptElement != null)
+                WebWorker.scriptURI = scriptElement.getAttribute("src") || undefined;
+        }
+        if (WebWorker.scriptURI) {
+            WebWorker.globalWorker = new Worker(WebWorker.scriptURI);
+            return true;
+        }
+        else {
+            return false;
+        }
+    };
+    WebWorker.terminate = function () {
+        if (WebWorker.globalWorker) {
+            WebWorker.globalWorker.terminate();
+            WebWorker.globalWorker = undefined;
+        }
+    };
+    return WebWorker;
+}());
+WebWorker.installWebWorkerIfNeeded();
+
+function decompress$1(input) {
+    if (input == null)
+        throw new TypeError("decompress: undefined or null input received");
+    var inputBytes = CompressionCommon.decodeCompressedBytes(input);
+    var decompressor = new Decompressor();
+    var decompressedBytes = decompressor.decompressBlock(inputBytes);
+    return CompressionCommon.encodeDecompressedBytes(decompressedBytes);
+}
 function decompressAsync(input, options, callback) {
     if (callback == null)
         callback = function () { };
@@ -580,4 +589,4 @@ function decompressAsync(input, options, callback) {
     });
 }
 
-export { decompress, decompressAsync };
+export { decompress$1 as decompress, decompressAsync };

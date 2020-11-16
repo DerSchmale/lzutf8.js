@@ -1,7 +1,7 @@
 import typescript from "@rollup/plugin-typescript";
 
 export default [{
-    input: "./src/main.ts",
+    input: "./src/Exports/Exports.ts",
     output: [
         {
             file: "build/lzutf8.module.js",

@@ -14,7 +14,7 @@ type WorkerMessageDecompress = {
 type WorkerMessageDecompressionResult = {
 	token: string;
 	type: "decompressionResult";
-	data: string | Uint8Array;
+	data: string;
 }
 
 type WorkerMessageError = {
@@ -61,10 +61,10 @@ export class WebWorker {
 				const request: WorkerMessage = e.data;
 
 				if (request.type == "decompress") {
-					let decompressedData: string | Uint8Array;
+					let decompressedData: string;
 
 					try {
-						decompressedData = <string | Uint8Array>decompress(request.data);
+						decompressedData = decompress(request.data);
 					} catch (e) {
 						self.postMessage(<WorkerMessageError>{ token: request.token, type: "error", error: createErrorMessage(e) }, <any>[]);
 						return;
