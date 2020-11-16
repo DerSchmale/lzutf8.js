@@ -21,12 +21,16 @@
 		"url": "https://github.com/rotemdan/lzutf8.js/issues"
 	},
 	"main": "build/production/lzutf8.js",
+    "module": "build/module/lzutf8.js",
 	"files": [
 		"build/production/lzutf8.js",
 		"build/production/lzutf8.min.js",
 		"build/production/lzutf8.d.ts",
-		"README.md",
-		"LICENSE"
+        "build/module/lzutf8.js",
+        "build/module/lzutf8.d.ts",
+        "README.md",
+		"LICENSE",
+        "src"
 	],
 	"types": "build/production/lzutf8.d.ts",
 	"devDependencies": {
