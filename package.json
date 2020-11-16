@@ -23,14 +23,7 @@
 	"main": "build/production/lzutf8.js",
 	"module": "build/module/lzutf8.js",
 	"files": [
-		"build/production/lzutf8.js",
-		"build/production/lzutf8.min.js",
-		"build/production/lzutf8.d.ts",
-		"build/module/lzutf8.js",
-		"build/module/lzutf8.d.ts",
-		"README.md",
-		"LICENSE",
-		"src"
+		"build/lzutf8.module.js"
 	],
 	"types": "build/production/lzutf8.d.ts",
 	"devDependencies": {
