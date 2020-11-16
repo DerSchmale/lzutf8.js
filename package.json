@@ -20,8 +20,8 @@
 	"bugs": {
 		"url": "https://github.com/rotemdan/lzutf8.js/issues"
 	},
-	"main": "build/production/lzutf8.js",
-	"module": "build/module/lzutf8.js",
+	"main": "build/lzutf8.module.js",
+	"module": "build/lzutf8.module.js",
 	"files": [
 		"build/lzutf8.module.js"
 	],
