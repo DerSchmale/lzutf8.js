@@ -1,3 +1,9 @@
+The README.md doc below is from the original version. I've changed the code to work with
+ modules instead of namespaces and reduced it to include only the specific elements I need.
+ 
+All credit for the hard work for this goes to @rotemdan!  
+ 
+
 # LZ-UTF8
 
 [![Build Status](https://travis-ci.org/rotemdan/lzutf8.js.svg)](https://travis-ci.org/rotemdan/lzutf8.js)

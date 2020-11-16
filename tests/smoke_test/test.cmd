@@ -1,1 +1,0 @@
-node SanityTest.js

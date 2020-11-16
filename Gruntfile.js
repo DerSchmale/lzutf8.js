@@ -2,8 +2,7 @@ path = require("path");
 
 module.exports = function (grunt) {
 	const banner = '/*!\n LZ-UTF8 v<%=pkg.version%>\n\n Copyright (c) 2018, Rotem Dan\n Released under the MIT license.\n\n Build date: <%= grunt.template.today("yyyy-mm-dd") %> \n\n Please report any issue at https://github.com/rotemdan/lzutf8.js/issues\n*/\n';
-	const dummyTypeDeclarations = `declare namespace LZUTF8 {
-    type Buffer = any;
+	const dummyTypeDeclarations = `declare export type Buffer = any;
 
     namespace stream {
         type Transform = any;
@@ -36,6 +35,15 @@ export = LZUTF8
 				},
 
 				command: tsc + ' -p tsconfig_production.json --diagnostics',
+			},
+
+			buildModule: {
+				options: {
+					stdin: false,
+					failOnError: true,
+				},
+
+				command: 'rollup -c',
 			},
 		},
 
@@ -226,6 +234,13 @@ export = LZUTF8
 			'concat:addBannerToMinifiedProductionBuild'
 		]);
 
+	grunt.registerTask('buildModule',
+		[
+			'shell:buildModule',
+			'concat:addDummyDeclarationsToProductionDeclarationFile',
+			'concat:addBannerToProductionBuild'
+		]);
+
 	grunt.registerTask('startDevServer',
 		[
 			'connect:devserver',
@@ -234,6 +249,7 @@ export = LZUTF8
 	grunt.registerTask('default',
 		[
 			'buildDevelopment',
-			'buildProduction'
+			'buildProduction',
+			'buildModule',
 		]);
 };
